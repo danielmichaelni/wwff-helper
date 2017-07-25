@@ -7,6 +7,7 @@ const {
   BOARD_INCREASE_SIZE,
   LETTER_ADD,
   LETTER_CLEAR,
+  LETTER_UPDATE,
   POSSIBLE_WORDS_UPDATE,
   WORD_MAKE,
 } = actionTypes
@@ -55,25 +56,20 @@ const board = (state = initialBoard, action) => {
   }
 }
 
-const letters = (state = {}, action) => {
+const letters = (state = [], action) => {
   switch (action.type) {
-    case LETTER_ADD:
-      const { letter } = action.payload
-      return {
-        ...state,
-        [letter]: (state[letter] || 0) + 1,
-      }
-    case LETTER_CLEAR:
-      return {}
+    case LETTER_UPDATE:
+      return action.payload.letters.split('')
     case WORD_MAKE:
-      const { lettersUsed } = action.payload.word
-      let newLetters = {...state}
-      for (const letter in lettersUsed) {
-        if (lettersUsed.hasOwnProperty(letter)) {
-          newLetters[letter] -= lettersUsed[letter]
+      const counter = {...action.payload.word.lettersUsed}
+
+      return state.filter((letter) => {
+        if (counter[letter] || 0 > 1) {
+          counter[letter] -= 1
+          return false
         }
-      }
-      return newLetters
+        return true
+      })
     default:
       return state
   }

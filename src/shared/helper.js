@@ -2,6 +2,15 @@ import dict from './dict'
 import letterValues from './letterValues'
 
 
+export const toLettersDictionary = (letters) => {
+  return letters.reduce((acc, letter) => {
+    return {
+      ...acc,
+      [letter]: (acc[letter] || 0) + 1,
+    }
+  }, {})
+}
+
 export const getNumNeighbors = (board, x, y) => {
   const size = board.length
   let numNeighbors = 0
@@ -36,13 +45,13 @@ export const getWordScore = (word) => {
   return score
 }
 
-export const findWords = (letters) => {
+export const findWords = (lettersDictionary) => {
   return dict.filter((word) => {
     let lettersInWord = {}
     for (let i = 0; i < word.length; i++) {
       let letter = word.charAt(i)
       lettersInWord[letter] = (lettersInWord[letter] || 0) + 1
-      if (lettersInWord[letter] > (letters[letter] || 0)) {
+      if (lettersInWord[letter] > (lettersDictionary[letter] || 0)) {
         return false
       }
     }
@@ -50,17 +59,17 @@ export const findWords = (letters) => {
   })
 }
 
-export const findWordsWithThisLetter = (letters, thisLetter) => {
+export const findWordsWithThisLetter = (lettersDictionary, thisLetter) => {
   return findWords({
-    ...letters,
-    [thisLetter]: (letters[thisLetter] || 0) + 1,
+    ...lettersDictionary,
+    [thisLetter]: (lettersDictionary[thisLetter] || 0) + 1,
   }).filter((word) => {
     return word.indexOf(thisLetter) !== -1
   })
 }
 
-export const getInitialWord = (letters) => {
-  const w = findWords(letters)
+export const getInitialWord = (lettersDictionary) => {
+  const w = findWords(lettersDictionary)
   return w.reduce((acc, word) => {
     if (word.length > acc.length) {
       return word

@@ -1,27 +1,39 @@
+import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
 
 
 class Controls extends Component {
   static propTypes = {
+    board: PropTypes.array,
     boardIncreaseSize: PropTypes.func,
-    letterAdd: PropTypes.func,
-    letterClear: PropTypes.func,
+    letterUpdate: PropTypes.func,
     possibleWords: PropTypes.array,
     wordMake: PropTypes.func,
+    wordSearch: PropTypes.func,
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.debouncedWordSearch = _.debounce(props.wordSearch, 300)
   }
 
   onUseWordClick(word) {
     this.props.wordMake(word)
   }
 
-  onLettersChange(event) {
-    this.props.letterAdd(event.target.value)
+  handleChange(event) {
+    const { value } = event.target
+    const { letterUpdate } = this.props
+
+    letterUpdate(value).then(() => {
+      this.debouncedWordSearch()
+    })
   }
 
-  onKeyDown(event) {
+  handleKeyDown(event) {
     const {
       boardIncreaseSize,
-      letterAdd,
       letterClear,
       wordMake,
     } = this.props
@@ -29,16 +41,15 @@ class Controls extends Component {
 
     switch (key) {
       case 'Enter':
+        event.preventDefault();
         wordMake(this.props.possibleWords[0])
         break
       case ' ':
+        event.preventDefault();
         boardIncreaseSize()
         break
-      case 'Backspace':
-        letterClear()
-        break;
       default:
-        letterAdd(key)
+        break;
     }
   }
 
@@ -58,7 +69,11 @@ class Controls extends Component {
   }
 
   render() {
-    const { possibleWords } = this.props
+    const {
+      letters,
+      possibleWords,
+    } = this.props
+
     const renderedPossibleWords = this.renderPossibleWords(possibleWords)
 
     return (
@@ -66,12 +81,12 @@ class Controls extends Component {
         <div>letters -> letters</div>
         <div>space -> increase board size</div>
         <div>enter -> use current word</div>
-        <div>backspace -> clear letters</div>
         <div>
           <input
             className="input"
-            value=""
-            onKeyDown={(event) => this.onKeyDown(event)}
+            value={letters.join('')}
+            onChange={(event) => this.handleChange(event)}
+            onKeyDown={(event) => this.handleKeyDown(event)}
           />
         </div>
         <div>

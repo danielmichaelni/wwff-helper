@@ -1,65 +1,22 @@
 import actionTypes from './actionTypes'
 import { findWordsInBoard } from '../shared'
+import { toLettersDictionary } from '../shared/helper'
 
 
 const {
   BOARD_INCREASE_SIZE,
-  LETTER_ADD,
-  LETTER_CLEAR,
+  LETTER_UPDATE,
   POSSIBLE_WORDS_UPDATE,
   WORD_MAKE,
 } = actionTypes
 
-export const letterAdd = (letter) => {
+export const letterUpdate = (letters) => {
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       resolve(dispatch({
-        type: LETTER_ADD,
-        prevState: getState(),
-        payload: {
-          letter,
-        },
+        type: LETTER_UPDATE,
+        payload: { letters },
       }))
-    }).then(() => {
-      const state = getState()
-      const {
-        letters,
-        board,
-      } = state
-
-      dispatch({
-        type: POSSIBLE_WORDS_UPDATE,
-        prevState: state,
-        payload: {
-          possibleWords: findWordsInBoard(letters, board)
-        },
-      })
-    })
-  }
-}
-
-export const letterClear = () => {
-  return (dispatch, getState) => {
-    return new Promise((resolve, reject) => {
-      resolve(dispatch({
-        type: LETTER_CLEAR,
-        prevState: getState(),
-        payload: {},
-      }))
-    }).then(() => {
-      const state = getState()
-      const {
-        letters,
-        board,
-      } = state
-
-      dispatch({
-        type: POSSIBLE_WORDS_UPDATE,
-        prevState: state,
-        payload: {
-          possibleWords: findWordsInBoard(letters, board)
-        },
-      })
     })
   }
 }
@@ -83,7 +40,7 @@ export const boardIncreaseSize = () => {
         type: POSSIBLE_WORDS_UPDATE,
         prevState: state,
         payload: {
-          possibleWords: findWordsInBoard(letters, board)
+          possibleWords: findWordsInBoard(toLettersDictionary(letters), board)
         },
       })
     })
@@ -111,9 +68,24 @@ export const wordMake = (word) => {
         type: POSSIBLE_WORDS_UPDATE,
         prevState: state,
         payload: {
-          possibleWords: findWordsInBoard(letters, board)
+          possibleWords: findWordsInBoard(toLettersDictionary(letters), board)
         },
       })
+    })
+  }
+}
+
+export const wordSearch = () => {
+  return (dispatch, getState) => {
+    const state = getState()
+    const {
+      letters,
+      board,
+    } = state
+
+    dispatch({
+      type: POSSIBLE_WORDS_UPDATE,
+      payload: { possibleWords: findWordsInBoard(toLettersDictionary(letters), board) },
     })
   }
 }

@@ -6,7 +6,6 @@ class Board extends Component {
   static propTypes = {
     board: PropTypes.array,
     lastPosition: PropTypes.array,
-    letters: PropTypes.object,
   }
 
   renderRow(row, rowIndex) {
@@ -57,20 +56,13 @@ class Board extends Component {
   }
 
   render() {
-    const {
-      board,
-      letters,
-    } = this.props
+    const { board } = this.props
     const renderedBoard = this.renderBoard(board)
-    const renderedLetters = this.renderLetters(letters)
 
     return (
       <div>
         <div className="board">
           { renderedBoard }
-        </div>
-        <div className="letters">
-          { renderedLetters }
         </div>
       </div>
     )

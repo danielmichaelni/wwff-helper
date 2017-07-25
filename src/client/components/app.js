@@ -5,9 +5,9 @@ import Board from './board'
 import Controls from './controls'
 import {
   boardIncreaseSize,
-  letterAdd,
-  letterClear,
+  letterUpdate,
   wordMake,
+  wordSearch,
 } from '../actionCreators'
 
 
@@ -15,9 +15,10 @@ class App extends Component {
   static propTypes = {
     board: PropTypes.array,
     lastPosition: PropTypes.array,
-    letterAdd: PropTypes.func,
-    letterClear: PropTypes.func,
-    letters: PropTypes.object,
+    letterUpdate: PropTypes.func,
+    wordMake: PropTypes.func,
+    wordSearch: PropTypes.func,
+    letters: PropTypes.array,
     possibleWords: PropTypes.array,
     boardIncreaseSize: PropTypes.func,
   }
@@ -27,44 +28,47 @@ class App extends Component {
       board,
       boardIncreaseSize,
       lastPosition,
-      letterAdd,
-      letterClear,
+      letterUpdate,
       letters,
       possibleWords,
       wordMake,
+      wordSearch,
     } = this.props
 
     return (
       <div className="container">
         <Controls
+          board={board}
           boardIncreaseSize={boardIncreaseSize}
-          letterAdd={letterAdd}
-          letterClear={letterClear}
+          letterUpdate={letterUpdate}
+          letters={letters}
           possibleWords={possibleWords}
           wordMake={wordMake}
+          wordSearch={wordSearch}
         />
         <Board
           board={board}
           lastPosition={lastPosition}
-          letters={letters}
         />
       </div>
     )
   }
 }
 
-const mapStateToProps = (state) => ({
-  board: state.board,
-  lastPosition: state.lastPosition,
-  letters: state.letters,
-  possibleWords: state.possibleWords,
-})
+const mapStateToProps = (state) => {
+  return {
+    board: state.board,
+    lastPosition: state.lastPosition,
+    letters: state.letters,
+    possibleWords: state.possibleWords,
+  }
+}
 
 const mapDispatchToProps = {
   boardIncreaseSize,
-  letterAdd,
-  letterClear,
+  letterUpdate,
   wordMake,
+  wordSearch,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)
